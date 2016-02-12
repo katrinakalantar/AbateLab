@@ -8,9 +8,13 @@ createGroups.py [directory of fastq files to cluster] [clusterOnly]
     type anything else in arg2 (but it does require some jibberish input)
 
 output:
-1.clustered files
-2.metrics.o
-3.unclusterd.o
+1.clustered files - individual clustered .fq files
+2.metrics.o -
+3.unclusterd.o - list of files which failed to cluster
+
+*note: any line with the following text: "TODO: switch back for regular usage"
+    is intended to deal with fastq files ".fastq" v. ".fq" just uncomment the
+    respective lines based on the file format.
 
 '''
 
@@ -21,6 +25,7 @@ import os
 import glob
 import subprocess
 
+#run linux command to create mash sketches for all files
 def runMashSketch(file_string,k,s):
     print("inside runMashSketch")
     print(file_string)
@@ -30,11 +35,11 @@ def runMashSketch(file_string,k,s):
     print('finished runMashSketch')
     return
 
+#run linux command to create mash distance file
 def runMashDist(file_string,k,s):
     print("inside runMashDist")
     cmd = mash+' dist reference.msh -s ' +str(s)+' '+file_string+'> '+'mash_pdist_'+str(k)+'_'+str(s)
     print(cmd)
-    #os.system(cmd)
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     process.wait()
     print(process.returncode)
@@ -80,7 +85,6 @@ def getClusters(mash_distanceFile, threshold):
                     temp_dictionary[c1] = number_of_groups
                     temp_dictionary[c2] = number_of_groups
 
-    print('!!!')
     print(temp_dictionary)
 
     #keep output list of files which are not assigned to a cluster
@@ -105,6 +109,7 @@ def getClusters(mash_distanceFile, threshold):
         temp_arrayR2 = []
         for i in result_dictionary[x]:
             s = i.split('-')
+            #split the name of the file, this depends on how the names are declared so may need to be updated.
             name = s[0]+'-'+s[1] ###TODO: switch bach for regular usage
             #name = s[0]+'-'+s[1]+'-'+s[2]
             temp_arrayR1.append(name+'-1.fastq')  ###TODO: switch bach for regular usage
@@ -157,11 +162,10 @@ def concatonate_PE_reads(array_of_filenames):
 
 
 
-
 def main(input_directory,k,s,threshold,cu):
 
     #get list of all fastq files in directory
-    #array_of_filenames = glob.glob('./*.fq') ###TODO: switch bach for regular usage
+    #array_of_filenames = glob.glob('./*.fq') ###TODO: switch back for regular usage
     array_of_filenames = glob.glob('./*.fastq')
     #print(array_of_filenames)
 
@@ -187,11 +191,9 @@ def main(input_directory,k,s,threshold,cu):
         cmd2 = 'cat '+file_namesR2 + ' > cluster'+str(c)+'_R2.fastq'
         os.system(cmd2)
 
-
+#declare global variables
 start = timeit.default_timer()
-
 mash = '~/tools/MASH/mash'
-
 input_directory = sys.argv[1]
 iteration = 1
 k=12
@@ -201,9 +203,9 @@ threshold = .99
 array_of_filenames=None
 os.chdir(input_directory)
 
-
+#run main program
 main(input_directory,k,s,threshold,cu)
 
+#output total time to console
 stop = timeit.default_timer()
-
 print("time to complete: " + str(stop - start))
