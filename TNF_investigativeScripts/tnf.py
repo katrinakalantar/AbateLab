@@ -1,3 +1,16 @@
+__author__ = 'KATRINA'
+
+'''
+tnf.py [directory of fastq files to cluster]
+usage: investigate TNF; LDA analysis of TNFs for all fastq files in the input directory; plot the LDA results
+
+output:
+1. generate plot of LDA data - displays plot, but does not save it
+
+'''
+
+
+
 import sys
 import itertools
 import glob
@@ -142,13 +155,6 @@ def plot_scikit_lda(LDAresult):
         if i %20 == 0: #only write every 1/20 labels
             ax.text(x[i],y[i],z[i],  '%s' % (str(labels[i])), size=5, zorder=1, color='k')
         #print("["+str(x[i])+","+str(y[i])+","+str(z[i])+","+str(c[i])+"]"+ str(labels[i]))
-
-    '''
-    for label,x,y,z in zip(labels,x,y,z):
-        ax.annotate(
-            label, xyz=(x,y,z)
-        )
-        '''
 
     # make simple, bare axis lines through space:
     xAxisLine = ((min(pltData[0]), max(pltData[0])), (0, 0), (0,0)) # 2 points make the x-axis line at the data extrema along x-axis

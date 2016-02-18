@@ -2,9 +2,9 @@
 Gapped Genomes Clustering 
 work done in the Abate Lab at UCSF (Winter 2016 Rotation)
 
-# Most Important Scripts:
-createGroups.py
-krakenDistributions.py
+#### Most Important Scripts:
+##### createGroups.py
+##### krakenDistributions.py
 
 
 
@@ -17,10 +17,6 @@ usage: remove all reads containing "N" values from .fastq files
 output:
 1. fastq files by name [original_fastq_file_name.fastq].o with no reads containing "N" values
 
-### clusterByBoolMatrix.py
-clusterByBoolMatrix.py [mash distance file]
-
-usage: OUTDATED - was originally used to cluster via pairwise distances before implementing threshold-based clustering approach
 
 ### clusterData.py
 clusterData.py [input data matrix] [input refseq taxons] [output file name]
@@ -65,8 +61,6 @@ output:
     is intended to deal with fastq files ".fastq" v. ".fq" just uncomment the
     respective lines based on the file format.
 
-### createGroups_stringent_lessEffective
-OUTDATED - precursor file to createGroups.py (above) used to test parameters for k, s, and threshold values
 
 ### getPairwiseDistributions.py
 getPairwiseDistributions.py [pairwise MASH dist file]
@@ -77,12 +71,7 @@ threshold values for differing file sizes (reads/fastq)
 
 output: 
 per-species, per-file-size-category plots of inter- and intra-species distance (outputs LOTS of plots)
-	
-	
-### investigatingVectors
-OUTDATED - this was used to understand the composition of vectors resulting from MASH distance comparison to RefSeq DB
-this methods was abandoned in pursuit of the pairwise MASH distance approach
-	
+		
 	
 ### iterativeClustering.py
 iterativeClustering.py [input directory containing .fastq files to cluster]
@@ -117,18 +106,6 @@ kraken_purity.txt - output file containing filename and purity information
  so they are commented out by default
 
 
-### loadData.py
-loadData.py [input data matrix] [input refseq taxons] [output file name]
-
-OUTDATED - January 8th 2015
-This script does the following:
-1. Imports a file of mash-refseq hit vectors
-2. Imports a file of refseq taxonomic classifications
-3. Removes all rows containing zero values for all fastq files
-4. Removes the corresponding refseq taxonomic classifications
-5. Writes the new data matrix and refseq data to files
-
-
 ### pairwiseAnalysis.py
 pairwiseAnalysis.py [MASH distance file] [output file name]
 
@@ -147,3 +124,94 @@ usage: use this to view the distance file as a graph -
 output:
 1. graph.png - graph representation of the MASH distance file
 
+
+## TNF_investigativeScripts
+
+This directory contains scripts that were used to investigate tetranucleotide frequency (on its own and in tandem with kmer approach).
+The scripts were only used for investigation of the data but do not provide concrete clustering results.
+
+TODO: Add more detail on these scripts
+### kmerTNFcombo.py
+kmerTNFcombo.py [directory of fastq files to cluster] [clusterOnly]
+- use this to investigate TNF - the actual clustering alongside kmer
+    approach was not implemented
+- the most useful portion of this is the output "output_TNF_result.o", which
+    is a file containing all the TNF vectors (1 for each file in the input dir)
+- this script was adapted from createGroups.py (with much functionality commented out)
+
+NOTE:
+- if you already have a mash dist file for the dataset (in the directory specified as arg1)
+    type "clusterOnly" in arg2
+- else
+    type anything else in arg2 (but it does require some jibberish input)
+
+output:
+1.output_TNF_result.o - file containing TNF vectors (one per file in the input dir)
+
+
+### tnf.py
+tnf.py [directory of fastq files to cluster]
+usage: investigate TNF; LDA analysis of TNFs for all fastq files in the input directory; plot the LDA results
+
+output:
+1. generate plot of LDA data - displays plot, but does not save it
+
+
+### tnf_barebones.py
+tnf_barebones.py [input_directory]
+- "input_directory" must contain all the .fastq files for which you intend to calculate TNF
+- this program 1. calculates the TNF for all reads within a file and
+               2. calculates the std deviation of all TNF vectors
+               3. outputs the mean std deviation for each file
+- used to determine whether std deviation in TNF can distinguish pure files from contaminated files
+
+output:
+tnf_barebones.log : general log file
+tnf_barebonesOut.o : tab delimited file contining-
+                        filename, and the average of all standard deviation values for the file
+
+						
+### tnfvmash.py
+tnfvmash.py
+- used to generate plots (scatter and density curve) comparing the mash dist to the tnf dist
+- file names are hard coded within the script, this was for investigative purposes only
+- the file names hard coded are from separated columns based on the file
+    kmerTNF.o (output of early version of kmerTNFcombo.py)
+    
+* plots generated with this approach were less informative than expected,
+  and therefore I stopped development in this direction, script may not be robust with other inputs
+
+  
+
+## preliminary_outdated
+
+This directory contains scripts for initial approaches which have since been abandoned or are no longer necessary to the analysis.
+Initial Approaches Include:
+1. Comparison to MASH RefSeq database
+2. Hierarchical clustering of pairwise data
+
+
+### clusterByBoolMatrix.py
+clusterByBoolMatrix.py [mash distance file]
+OUTDATED - was originally used to cluster via pairwise distances before implementing threshold-based clustering approach
+
+
+### createGroups_stringent_lessEffective
+OUTDATED - precursor file to createGroups.py (above) used to test parameters for k, s, and threshold values
+
+
+### investigateVectors.py
+OUTDATED - this was used to understand the composition of vectors resulting from MASH distance comparison to RefSeq DB
+this methods was abandoned in pursuit of the pairwise MASH distance approach
+
+
+### loadData.py
+loadData.py [input data matrix] [input refseq taxons] [output file name]
+
+OUTDATED - January 8th 2015
+This script does the following:
+1. Imports a file of mash-refseq hit vectors
+2. Imports a file of refseq taxonomic classifications
+3. Removes all rows containing zero values for all fastq files
+4. Removes the corresponding refseq taxonomic classifications
+5. Writes the new data matrix and refseq data to files
