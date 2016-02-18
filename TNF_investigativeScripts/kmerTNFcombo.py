@@ -1,4 +1,24 @@
 __author__ = 'KATRINA'
+
+'''
+kmerTNFcombo.py [directory of fastq files to cluster] [clusterOnly]
+- use this to investigate TNF - the actual clustering alongside kmer
+    approach was not implemented
+- the most useful portion of this is the output "output_TNF_result.o", which
+    is a file containing all the TNF vectors (1 for each file in the input dir)
+- this script was adapted from createGroups.py (with much functionality commented out)
+
+NOTE:
+- if you already have a mash dist file for the dataset (in the directory specified as arg1)
+    type "clusterOnly" in arg2
+- else
+    type anything else in arg2 (but it does require some jibberish input)
+
+output:
+1.output_TNF_result.o - file containing TNF vectors (one per file in the input dir)
+
+'''
+
 import numpy as np
 import pandas as pd
 import sys
@@ -16,14 +36,9 @@ import itertools
 
 def runMashSketch(file_string,k,s):
     print("inside runMashSketch")
-    #print(file_string)
     cmd = mash+' sketch -o reference -u -k '+str(k)+' -s '+str(s)+' '+file_string
     print(cmd)
     os.system(cmd)
-    #process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-    #process = subprocess.Popen([mash,"sketch" "-o reference","-u","-k "+str(k), "-s "+str(s),file_string], shell=True, stdout=subprocess.PIPE)
-    #process.wait()
-    #print(process.returncode)
     print('finished runMashSketch')
     return
 
@@ -31,13 +46,13 @@ def runMashDist(file_string,k,s):
     print("inside runMashDist")
     cmd = mash+' dist reference.msh -s ' +str(s)+' '+file_string+'> '+'mash_pdist_'+str(k)+'_'+str(s)
     print(cmd)
-    #os.system(cmd)
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     process.wait()
     print(process.returncode)
     print('finished runMashDist')
     return
 
+#for a single file, get the kmer frequencies - return 1 TNF vector
 def getKmerFreqs(input_file):
     f = open(input_file,'r').readlines()
     alphabet = 'ACGT'
@@ -50,12 +65,10 @@ def getKmerFreqs(input_file):
     for line_num in range(len(f)):
         if line_num%4 == 1:
             line = f[line_num]
-            #print(line)
             for i in range(len(line)-4):
                 total_kmer_count += 1
                 kmerD[line[i:i+4]] += 1
 
-    #print(str(kmerD))
     new_kmerD = {}
     for k in kmerD:
         new_kmerD[k] = float(kmerD[k]/float(total_kmer_count))
@@ -66,15 +79,19 @@ def getKmerFreqs(input_file):
         kmer_result_vector.append(new_kmerD[value])
     return kmer_result_vector
 
+#calculate the TNF for all files (1 TNF vector per file) 
 def calculateTNF(array_of_filenames):
     all_kmer_vectors = {}; all_kmer_vectors_array = []; labels = []
+    f = open("output_TNF_result.o",'w')
     for input_file in array_of_filenames:
         labels.append(str(input_file))#.split('-')[2])
         v = getKmerFreqs(input_file)
         all_kmer_vectors_array.append(np.asarray(v))
         all_kmer_vectors[input_file] = v
+        f.write(input_file + "\t" + str(v))
     return all_kmer_vectors_array, labels#all_kmer_vectors
 
+#run PCA via the default python matplotlib.mlab PCA library
 def runPCA(all_kmer_vectors_array, labels):
     pca_dictionary = {}
     results = PCA(np.asarray(all_kmer_vectors_array))
@@ -84,50 +101,39 @@ def runPCA(all_kmer_vectors_array, labels):
 
     return pca_dictionary
 
-
+#calculate the euclidean distance between two TNF vectors
 def getTNFdist(pca_dictionary, file_name1, file_name2):
-    #print(pca_dictionary.keys()[0:10])
-    #print(file_name1)
-    #print(file_name2)
     v1 = pca_dictionary[file_name1]
-    #print(v1)
     v2 = pca_dictionary[file_name2]
-    #print(v2)
     dst = distance.euclidean(v1,v2)
     return dst
 
+#this is currently the remnants of the getClusters() function from createGroups.python
+#the actual functionality to create groups is commented out 
+#this script was used to return PCA information, but the corresponding clusters were never tested	
 def getClusters(mash_distanceFile, threshold, pca_dictionary):
     output_metrics = open("metrics.o",'w')
     unclustered = open("unclustered.o",'w')
     distFile = open(mash_distanceFile,'r')
 
-
     result_dictionary = {}
     temp_dictionary = {}
     all_file_names = {}
-
     line_count = 0
     number_of_groups = 0
 
     for line in distFile:
         line_count += 1
-
         l = line.split('\t')
 
         c1 = l[0].split('/')[-1]
         c2 = l[1].split('/')[-1]
         dist = 1-(float(l[4].strip().split('/')[0])/float(l[4].strip().split('/')[1]))
 
-        #tnf_dist = getTNFdist(pca_tnf_vectors,l[0],l[1])
         tnf_dist = getTNFdist(pca_dictionary,l[0],l[1])
-        #tnf_dist = getTNFdist(pca_tnf_vectors,c1,c2)
         print(c1 + '\t' + c2 + "\t" + str(dist) + "\t" + str(tnf_dist))
-
-
-
         all_file_names[c1] = True #keep a hash of all filenames
         all_file_names[c2] = True
-
 
         '''
         if dist <= threshold:
@@ -201,6 +207,7 @@ def main(input_directory,k,s,threshold,cu):
     #concatFilesR1, concatFilesR2 = getClusters('mash_pdist_'+str(k)+'_'+str(s), threshold, pca_tnf_vectors)
     getClusters('mash_pdist_'+str(k)+'_'+str(s), threshold, pca_tnf_vectors)
 
+	#commented out the functionality to concatonate grouped files together into single file
     '''
     for c in concatFilesR1.keys():
         file_namesR1 = concatFilesR1[c]
@@ -213,7 +220,6 @@ def main(input_directory,k,s,threshold,cu):
 
 
 start = timeit.default_timer()
-
 mash = '~/tools/MASH/mash'
 
 input_directory = sys.argv[1]
