@@ -1,5 +1,16 @@
 __author__ = 'KATRINA'
 
+'''
+getPairwiseDistributions.py [pairwise MASH dist file]
+
+usage: this script was used to plot histograms of inter- and intra- species similarity and set 
+threshold values for differing file sizes (reads/fastq)
+*entirely for investigative purposes
+
+output: 
+per-species, per-file-size-category plots of inter- and intra-species distance (outputs LOTS of plots)
+'''
+
 import sys
 from matplotlib import pyplot as plt
 import numpy as np
@@ -143,10 +154,7 @@ def comparativePairwiseDistributions(specD, ispecD, title):
         plt.close()
 
 
-print('a')
 specD1000, ispecD1000, specD2500, ispecD2500, specD5000, ispecD5000, specD7500, ispecD7500, specD10000, ispecD10000 = getPairwiseDistributions(sys.argv[1])
-
-print('begin')
 
 plotPairwiseDistributions(specD1000,'1000')
 #plotPairwiseDistributions(specD2500,'2500')
@@ -154,10 +162,7 @@ plotPairwiseDistributions(specD1000,'1000')
 #plotPairwiseDistributions(specD7500,'7500')
 #plotPairwiseDistributions(specD10000,'10000')
 
-print('second')
-
 comparativePairwiseDistributions(specD1000, ispecD1000, '1000')
-print('1000done')
 #comparativePairwiseDistributions(specD2500, ispecD2500, '2500')
 #print('2500done')
 #comparativePairwiseDistributions(specD5000, ispecD5000, '5000')

@@ -1,4 +1,11 @@
 __author__ = 'KATRINA'
+
+'''
+clusterByBoolMatrix.py [mash distance file]
+
+usage: OUTDATED - was originally used to cluster via pairwise distances before implementing threshold-based clustering approach
+'''
+
 import numpy as np
 import pandas as pd
 import sys

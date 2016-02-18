@@ -1,12 +1,12 @@
 __author__ = 'KATRINA'
 
 '''
-cleanFQ.py [directory of fastq files to clean]
-- use this to remove all reads containing "N" values from .fastq files
+cleanFQ.py [directory containing .fastq files to clean]
+
+usage: remove all reads containing "N" values from .fastq files
 - NOTE: this removes reads on a per-file basis, does not consider paired read 
 	(ie if only one paired read contains "N" values, paired file output will now contain a read with no pair
-
-	output:
+output:
 1. fastq files by name [original_fastq_file_name.fastq].o with no reads containing "N" values
 
 '''

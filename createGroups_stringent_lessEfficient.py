@@ -1,4 +1,9 @@
 __author__ = 'KATRINA'
+
+'''
+OUTDATED - precursor file to createGroups.py (above) used to test parameters for k, s, and threshold values
+'''
+
 import numpy as np
 import pandas as pd
 import sys

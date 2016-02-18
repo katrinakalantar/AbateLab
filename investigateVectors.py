@@ -1,5 +1,10 @@
 __author__ = 'KATRINA'
 
+'''
+OUTDATED - this was used to understand the composition of vectors resulting from MASH distance comparison to RefSeq DB
+this methods was abandoned in pursuit of the pairwise MASH distance approach
+'''
+
 import numpy as np
 import sys
 import matplotlib.pyplot as plt

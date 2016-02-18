@@ -1,5 +1,19 @@
 __author__ = 'KATRINA'
 
+'''
+clusterData2.py [pairwise MASH distance file] [output file name]
+
+usage: this does a full clustering (without actually concatonating files) based on the hierarchical clustering
+and linkage graph. This script will fail for input sizes > 2000 fastq files - linkage function and hierarchical
+clustering are computationally intensive.
+
+- NOTE: this approach was abandoned due to difficulty setting a cutoff on the dendrogram for clustering
+
+output:
+1. outputs several files and images for analysing the species composition of each cluster 
+2. [output file name]sns_clustermap_output.png - heatmap of the clustered data
+'''
+
 import sys
 import numpy as np
 import pandas as pd

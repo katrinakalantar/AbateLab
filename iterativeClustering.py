@@ -3,6 +3,19 @@ matplotlib.use('Agg')
 
 __author__ = 'KATRINA'
 
+'''
+iterativeClustering.py [input directory containing .fastq files to cluster]
+
+usage: this script was used alongside development of clusterData.py to run the hierarchical clustering algorithm
+iteratively - recursively calls itself to re-run MASH on clustered files and continue clustering up to 6 iterations.
+
+output:
+1. clustered .fastq files in directories corresponding to the iteration
+2. linkage_matrix[iteration#].txt - contains the full linkage matrix for each iteration
+
+'''
+
+
 import sys
 import glob
 import os

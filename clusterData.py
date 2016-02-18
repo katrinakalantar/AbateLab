@@ -1,5 +1,17 @@
 __author__ = 'KATRINA'
 
+'''
+clusterData.py [input data matrix] [input refseq taxons] [output file name]
+
+usage: this script was used to cluster data based on MASH distance to the RefSeq database. 
+Creates a dendrogram from hierarchical clustering (via python fastcluster module) of the refseq MASH data.
+
+- NOTE: prohibitively slow for large datasets; this approach was abandoned after pursuing pairwise method
+output:
+1. [output file name]_dendroMatrix.txt - saves the input to the dendrogram after running fastcluster
+2. [output file name]_dendro.png - saves the .png image of the dendrogram
+
+'''
 
 import numpy as np
 import sys
