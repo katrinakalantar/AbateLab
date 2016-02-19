@@ -1,5 +1,16 @@
 __author__ = 'KATRINA'
 
+'''
+
+removeAlignedReads.py [alignment file (.SAM format from bowtie2)] [root name for paired end .fastq files]
+
+usage: look at the .SAM file and mark all reads which were aligned or unaligned;
+remove all aligned reads from the corresponding .fastq files.
+
+- the goal of this is to create .fastq files with 100% novel reads for further analysis and assembly
+
+'''
+
 import sys
 
 alignment_file = sys.argv[1]
