@@ -134,6 +134,50 @@ output:
 1. graph.png - graph representation of the MASH distance file
 
 
+## Bash Scripts
+
+This directory contains bash scripts that were used to run tools or for preliminary data processing
+
+### fullKraken.sh
+fullKraken.sh [directory containing .fq files]
+wrapper around runKraken.sh script; runs Kraken on every .fq file within the specified directory
+
+
+### runKraken.sh
+runKraken.sh [.fq file]
+run Kraken on the specified .fq file
+output:
+1. [.fq file name]-kr-sp containing all the species found by kraken
+2. [.fq file name]-kr-ov containing the overview of total species counts from the -kr-sp file
+
+
+### runSimulation.sh
+runSimulation.sh [simulation output directory]
+wrapper around simulation2_v1
+
+
+### simulation2_v1.sh
+simulation2_v1.sh [simulation output directory]
+creates the new simulation directory and then generates paired end .fq files from the reference files, pulling randomly from lengths specified length
+within the script there is 
+1. a variable "reference_directory" which can be set to a different directory of genomes
+2. a variable for len=() and the integer values within that line indicate the range of values for length of file
+*both of the above parameters should be modified within the file prior to running
+
+
+### pairwiseMash.sh
+pairwiseMash.sh [name of directory containing .fq files (omit trailing slash)] [k] [s]
+run MASH sketch on every file in the directory
+run MASH dist on every file in the directory
+save to the file: mash_pairwiseDistances
+
+
+### createSketches.sh
+createSketches.sh [name of directory containing .fq files (omit trailing slash)]
+run MASH sketch to create .msh sketch files for all .fq files in the root directory
+
+
+
 ## TNF_investigativeScripts
 
 This directory contains scripts that were used to investigate tetranucleotide frequency (on its own and in tandem with kmer approach).
