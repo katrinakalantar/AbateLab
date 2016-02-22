@@ -9,7 +9,9 @@ work done in the Abate Lab at UCSF (Winter 2016 Rotation)
 
 
 ### cleanFQ.py
+```
 cleanFQ.py [directory containing .fastq files to clean]
+```
 
 usage: remove all reads containing "N" values from .fastq files
 - NOTE: this removes reads on a per-file basis, does not consider paired read 
@@ -19,7 +21,9 @@ output:
 
 
 ### clusterData.py
+```
 clusterData.py [input data matrix] [input refseq taxons] [output file name]
+```
 
 usage: this script was used to cluster data based on MASH distance to the RefSeq database. 
 Creates a dendrogram from hierarchical clustering (via python fastcluster module) of the refseq MASH data.
@@ -31,7 +35,9 @@ output:
 
 
 ### clusterData2.py
+```
 clusterData2.py [pairwise MASH distance file] [output file name]
+```
 
 usage: this does a full clustering (without actually concatonating files) based on the hierarchical clustering
 and linkage graph. This script will fail for input sizes > 2000 fastq files - linkage function and hierarchical
@@ -45,7 +51,10 @@ output:
 
 
 ### createGroups.py
+```
 createGroups.py [directory of fastq files to cluster] [clusterOnly]
+```
+
 - use this to generate clusters for a set of fastq files of the format: name-filelen-1-fastq
 - if you already have a mash dist file for the dataset (in the directory specified as arg1)
     type "clusterOnly" in arg2
@@ -63,7 +72,9 @@ output:
 
 
 ### getPairwiseDistributions.py
+```
 getPairwiseDistributions.py [pairwise MASH dist file]
+```
 
 usage: this script was used to plot histograms of inter- and intra- species similarity and set 
 threshold values for differing file sizes (reads/fastq)
@@ -74,7 +85,9 @@ per-species, per-file-size-category plots of inter- and intra-species distance (
 		
 	
 ### iterativeClustering.py
+```
 iterativeClustering.py [input directory containing .fastq files to cluster]
+```
 
 usage: this script was used alongside development of clusterData.py to run the hierarchical clustering algorithm
 iteratively - recursively calls itself to re-run MASH on clustered files and continue clustering up to 6 iterations.
@@ -85,7 +98,10 @@ output:
 
 	
 ### krakenDistributions.py
+```
 krakenDistributions.py [input directory] [kraken file]
+```
+
 - take in the kraken file (obtained from running ~/scripts/fullKraken.sh > filename) (on AbateLab server)
 file contents should look like:
 "
@@ -107,7 +123,9 @@ kraken_purity.txt - output file containing filename and purity information
 
 
 ### pairwiseAnalysis.py
+```
 pairwiseAnalysis.py [MASH distance file] [output file name]
+```
 
 usage: create a cluster map (heatmap) of the data in the MASH pairwise distance file; used this to visualize the potential for a sample to cluster
 
@@ -116,7 +134,9 @@ output:
 
 
 ### removeAlignedReads.py
+```
 removeAlignedReads.py [alignment file (.SAM format from bowtie2)] [root name for paired end .fastq files]
+```
 
 usage: look at the .SAM file and mark all reads which were aligned or unaligned;
 remove all aligned reads from the corresponding .fastq files.
@@ -125,7 +145,9 @@ remove all aligned reads from the corresponding .fastq files.
 
 
 ### viewAsGraph.py
+```
 viewAsGraph.py [MASH distance file]
+```
 
 usage: use this to view the distance file as a graph - 
 - NOTE: cannot run on abatelab computer bc of package dependencies; only works for small sets of files when run locally
@@ -139,12 +161,18 @@ output:
 This directory contains bash scripts that were used to run tools or for preliminary data processing
 
 ### fullKraken.sh
+```
 fullKraken.sh [directory containing .fq files]
+```
+
 wrapper around runKraken.sh script; runs Kraken on every .fq file within the specified directory
 
 
 ### runKraken.sh
+```
 runKraken.sh [.fq file]
+```
+
 run Kraken on the specified .fq file
 output:
 1. [.fq file name]-kr-sp containing all the species found by kraken
@@ -152,12 +180,18 @@ output:
 
 
 ### runSimulation.sh
+```
 runSimulation.sh [simulation output directory]
+```
+
 wrapper around simulation2_v1
 
 
 ### simulation2_v1.sh
+```
 simulation2_v1.sh [simulation output directory]
+```
+
 creates the new simulation directory and then generates paired end .fq files from the reference files, pulling randomly from lengths specified length
 within the script there is 
 1. a variable "reference_directory" which can be set to a different directory of genomes
@@ -166,14 +200,20 @@ within the script there is
 
 
 ### pairwiseMash.sh
+```
 pairwiseMash.sh [name of directory containing .fq files (omit trailing slash)] [k] [s]
+```
+
 run MASH sketch on every file in the directory
 run MASH dist on every file in the directory
 save to the file: mash_pairwiseDistances
 
 
 ### createSketches.sh
+```
 createSketches.sh [name of directory containing .fq files (omit trailing slash)]
+```
+
 run MASH sketch to create .msh sketch files for all .fq files in the root directory
 
 
@@ -183,9 +223,11 @@ run MASH sketch to create .msh sketch files for all .fq files in the root direct
 This directory contains scripts that were used to investigate tetranucleotide frequency (on its own and in tandem with kmer approach).
 The scripts were only used for investigation of the data but do not provide concrete clustering results.
 
-TODO: Add more detail on these scripts
+
 ### kmerTNFcombo.py
+```
 kmerTNFcombo.py [directory of fastq files to cluster] [clusterOnly]
+```
 - use this to investigate TNF - the actual clustering alongside kmer
     approach was not implemented
 - the most useful portion of this is the output "output_TNF_result.o", which
@@ -203,7 +245,9 @@ output:
 
 
 ### tnf.py
+```
 tnf.py [directory of fastq files to cluster]
+```
 usage: investigate TNF; LDA analysis of TNFs for all fastq files in the input directory; plot the LDA results
 
 output:
@@ -211,7 +255,9 @@ output:
 
 
 ### tnf_barebones.py
+```
 tnf_barebones.py [input_directory]
+```
 - "input_directory" must contain all the .fastq files for which you intend to calculate TNF
 - this program 1. calculates the TNF for all reads within a file and
                2. calculates the std deviation of all TNF vectors
@@ -225,7 +271,9 @@ tnf_barebonesOut.o : tab delimited file contining-
 
 						
 ### tnfvmash.py
+```
 tnfvmash.py
+```
 - used to generate plots (scatter and density curve) comparing the mash dist to the tnf dist
 - file names are hard coded within the script, this was for investigative purposes only
 - the file names hard coded are from separated columns based on the file
@@ -245,7 +293,9 @@ Initial Approaches Include:
 
 
 ### clusterByBoolMatrix.py
+```
 clusterByBoolMatrix.py [mash distance file]
+```
 OUTDATED - was originally used to cluster via pairwise distances before implementing threshold-based clustering approach
 
 
@@ -259,7 +309,9 @@ this methods was abandoned in pursuit of the pairwise MASH distance approach
 
 
 ### loadData.py
+```
 loadData.py [input data matrix] [input refseq taxons] [output file name]
+```
 
 OUTDATED - January 8th 2015
 This script does the following:
