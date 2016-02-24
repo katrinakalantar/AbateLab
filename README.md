@@ -20,36 +20,6 @@ output:
 1. fastq files by name [original_fastq_file_name.fastq].o with no reads containing "N" values
 
 
-### clusterData.py
-```
-clusterData.py [input data matrix] [input refseq taxons] [output file name]
-```
-
-usage: this script was used to cluster data based on MASH distance to the RefSeq database. 
-Creates a dendrogram from hierarchical clustering (via python fastcluster module) of the refseq MASH data.
-
-- NOTE: prohibitively slow for large datasets; this approach was abandoned after pursuing pairwise method
-output:
-1. [output file name]_dendroMatrix.txt - saves the input to the dendrogram after running fastcluster
-2. [output file name]_dendro.png - saves the .png image of the dendrogram
-
-
-### clusterData2.py
-```
-clusterData2.py [pairwise MASH distance file] [output file name]
-```
-
-usage: this does a full clustering (without actually concatonating files) based on the hierarchical clustering
-and linkage graph. This script will fail for input sizes > 2000 fastq files - linkage function and hierarchical
-clustering are computationally intensive.
-
-- NOTE: this approach was abandoned due to difficulty setting a cutoff on the dendrogram for clustering
-
-output:
-1. outputs several files and images for analysing the species composition of each cluster 
-2. [output file name]sns_clustermap_output.png - heatmap of the clustered data
-
-
 ### createGroups.py
 ```
 createGroups.py [directory of fastq files to cluster] [clusterOnly]
@@ -83,19 +53,6 @@ threshold values for differing file sizes (reads/fastq)
 output: 
 per-species, per-file-size-category plots of inter- and intra-species distance (outputs LOTS of plots)
 		
-	
-### iterativeClustering.py
-```
-iterativeClustering.py [input directory containing .fastq files to cluster]
-```
-
-usage: this script was used alongside development of clusterData.py to run the hierarchical clustering algorithm
-iteratively - recursively calls itself to re-run MASH on clustered files and continue clustering up to 6 iterations.
-
-output:
-1. clustered .fastq files in directories corresponding to the iteration
-2. linkage_matrix[iterationNumber].txt - contains the full linkage matrix for each iteration
-
 	
 ### krakenDistributions.py
 ```
@@ -292,6 +249,36 @@ Initial Approaches Include:
 2. Hierarchical clustering of pairwise data
 
 
+### clusterData.py
+```
+clusterData.py [input data matrix] [input refseq taxons] [output file name]
+```
+
+usage: this script was used to cluster data based on MASH distance to the RefSeq database. 
+Creates a dendrogram from hierarchical clustering (via python fastcluster module) of the refseq MASH data.
+
+- NOTE: prohibitively slow for large datasets; this approach was abandoned after pursuing pairwise method
+output:
+1. [output file name]_dendroMatrix.txt - saves the input to the dendrogram after running fastcluster
+2. [output file name]_dendro.png - saves the .png image of the dendrogram
+
+
+### clusterData2.py
+```
+clusterData2.py [pairwise MASH distance file] [output file name]
+```
+
+usage: this does a full clustering (without actually concatonating files) based on the hierarchical clustering
+and linkage graph. This script will fail for input sizes > 2000 fastq files - linkage function and hierarchical
+clustering are computationally intensive.
+
+- NOTE: this approach was abandoned due to difficulty setting a cutoff on the dendrogram for clustering
+
+output:
+1. outputs several files and images for analysing the species composition of each cluster 
+2. [output file name]sns_clustermap_output.png - heatmap of the clustered data
+
+
 ### clusterByBoolMatrix.py
 ```
 clusterByBoolMatrix.py [mash distance file]
@@ -306,6 +293,19 @@ OUTDATED - precursor file to createGroups.py (above) used to test parameters for
 ### investigateVectors.py
 OUTDATED - this was used to understand the composition of vectors resulting from MASH distance comparison to RefSeq DB
 this methods was abandoned in pursuit of the pairwise MASH distance approach
+
+	
+### iterativeClustering.py
+```
+iterativeClustering.py [input directory containing .fastq files to cluster]
+```
+
+usage: this script was used alongside development of clusterData.py to run the hierarchical clustering algorithm
+iteratively - recursively calls itself to re-run MASH on clustered files and continue clustering up to 6 iterations.
+
+output:
+1. clustered .fastq files in directories corresponding to the iteration
+2. linkage_matrix[iterationNumber].txt - contains the full linkage matrix for each iteration
 
 
 ### loadData.py

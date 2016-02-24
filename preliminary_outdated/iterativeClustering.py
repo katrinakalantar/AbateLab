@@ -27,6 +27,7 @@ import seaborn as sns
 
 #input_directory = directory containing .fastq files for each round - will involve copying non-cluster files and grouped files into new directory
 
+#run linux command to create mash sketches for all files
 def runMashSketch(file_string,k,s,iteration):
     print("inside runMashSketch")
     cmd = mash+' sketch -o reference'+str(iteration)+' -u -k '+str(k)+' -s '+str(s)+' '+file_string
@@ -34,6 +35,7 @@ def runMashSketch(file_string,k,s,iteration):
     os.system(cmd)
     return
 
+#run linux command to create mash distance file
 def runMashDist(file_string,k,s,iteration):
     print("inside runMashDist")
     cmd = mash+' dist reference'+str(iteration)+'.msh -s ' +str(s)+' '+file_string+' > '+'mash_pdist_i'+str(iteration)+'_'+str(k)+'_'+str(s)
@@ -41,6 +43,7 @@ def runMashDist(file_string,k,s,iteration):
     os.system(cmd)
     return
 
+#create a data frame by extracting all pairwise distances from the MASH distance file
 def calculateDistanceDF(mash_dist_file):
     print("inside calculateDistanceDF")
     pmF = open(mash_dist_file,'r').readlines()
@@ -54,7 +57,10 @@ def calculateDistanceDF(mash_dist_file):
     df = ser.unstack().fillna(0)
     return [df, pairwise_dict]
 
-
+#hierarchical clustering creates an array (cluster_array) listing the cluster that each element belongs to
+#columns_headers is the ordered list of elements that correspond to the elements in cluster_array
+#combine all column headers with the same cluster integer value into a group
+#return the groups in the form of a dictionary
 def separateClusters(cluster_array, column_headers):
     print("inside sparateClusters")
     max_cluster = max(cluster_array)
@@ -85,6 +91,7 @@ def getGroupComposition(cluster_dictionary):
         iteration_groups_dictionary[group_id] = file_list
     return iteration_groups_dictionary, species_counts_dictionary #species_groups_dictionary
 
+#given a list of file names, concatenate all into one file
 def combineGroupFiles(array_of_filenames, species, i, iteration):
     files_to_combine = ' '.join(array_of_filenames)
     cmd = 'cat '+files_to_combine+' > iter'+str(iteration)+'_group'+str(i)+'-'+species+'-c.fq'
@@ -97,8 +104,8 @@ clusters = None
 uncategorized_clusters_exist = True
 input_directory = sys.argv[1]
 iteration = 1
-k=16
-s=400
+k=16		#k-mer size for MASH
+s=400		#sketch size for MASH
 array_of_filenames=None
 os.chdir(input_directory)
 valid_merge=0
@@ -148,6 +155,7 @@ def main(input_directory, array_of_filenames, uncategorized_clusters_exist,itera
         m = 75-5*iteration
         print("maxclust: "+str(m))
 
+		#perform hierarchical clustering on the linkage matrix
         clusters = hierarchy.fcluster(linkage_matrix,m,'maxclust') ##THIS IS THE LINE I WANT TO USE WITH KNOWN CLUSTER NUMBERS
         #clusters=hierarchy.fcluster(linkage_matrix,1.5+(.3*iteration),'inconsistent',depth=9)
         print(clusters)
@@ -166,20 +174,15 @@ def main(input_directory, array_of_filenames, uncategorized_clusters_exist,itera
                         d = pairwise_dict[(a,b)]
                         dist_array.append(d)
             try:
-                avg = sum(dist_array)/len(dist_array)   #SOME CLUSTERS HAVE ONLY 1 ENTRY IN THEM -- NOT SURE WHY THIS IS HAPPENING, BUT IT CAUSES 0 length dist[] because a==b
+                avg = sum(dist_array)/len(dist_array)   #SOME CLUSTERS HAVE ONLY 1 ENTRY IN THEM 
             except:
                 avg = 0
             avg_cluster_distances.append(avg)
-        #print(avg_cluster_distances)
-
-        #sns_plot3 = sns.clustermap(df, row_linkage = linkage_matrix, col_linkage = linkage_matrix, method='ward', cbar = True, cmap = "summer_r", figsize=(8,8))
-        #fig3 = sns_plot3.savefig("sns_clustermap_output_"+str(iteration)+".png")
-
 
         next_file_names = []
         for i in range(len(species_counts)):
             #if len(species_counts[i+1]) == 1: #this is a pure species file, combine all groups  ##1/22 changing this to distance metric
-            if avg_cluster_distances[i] < 0.99:   #CAN"T TELL IF THIS SHOULD BE i or i+1 - actually, should be i because its an array and the others are dictionaries with int keys
+            if avg_cluster_distances[i] < 0.99:   
                 print("~valid cluster by avg dist~")
                 #print("cluster contains single species")
                 global valid_merge

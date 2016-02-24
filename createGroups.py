@@ -195,9 +195,8 @@ def main(input_directory,k,s,threshold,cu):
 start = timeit.default_timer()
 mash = '~/tools/MASH/mash'
 input_directory = sys.argv[1]
-iteration = 1
-k=12
-s=5000
+k=12 		#k-mer length for MASH
+s=5000		#sketch size for MASH
 cu = sys.argv[2]
 threshold = .99
 array_of_filenames=None
