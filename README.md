@@ -6,6 +6,29 @@ work done in the Abate Lab at UCSF (Winter 2016 Rotation)
 ##### createGroups.py
 ##### krakenDistributions.py
 
+Example workflow:
+
+given a directory: /OceanBeach1/* containing all R1 and R2 .fastq files
+
+```
+# clean the .fastq files - remove all NNNN entries
+> python cleanFQ.py OceanBeach1
+
+# create clusters from the input .fq files
+> python createGroups.py OceanBeach1 
+
+# make a directory for all the cluster files, move cluster* files to the new directory
+> mkdir OceanBeach1/clusters
+> mv cluster* OceanBeach1/clusters
+
+# run kraken on all cluster files to evaluate purity of the clusters (assuming initial purity was OK)
+> bash fullKraken.sh OceanBeach1/clusters
+
+# [run bowtie 2 on all cluster files
+
+# remove aligned reads from the cluster files
+> python removeAlignedReads OceanBeach1/clusters/[alignment file name] OceanBeach/clusters/[correspondign .fq file root (without -1.fq|-2.fq)
+```
 
 
 ### cleanFQ.py
