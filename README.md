@@ -11,11 +11,11 @@ Example workflow:
 given a directory: /OceanBeach1/* containing all R1 and R2 .fastq files
 
 ```
-# clean the .fastq files - remove all NNNN entries
-> python cleanFQ.py OceanBeach1
+# create .msh sketch files and a mash pairwise distance file "mash_pdist_[k-value]_[s-value]
+> python runMashDist.py OceanBeach1
 
-# create clusters from the input .fq files
-> python createGroups.py OceanBeach1 
+# create clusters from the input .fq files and pairwise distance file
+> python createGroups.py OceanBeach1 mash_pdist_12_5000
 
 # make a directory for all the cluster files, move cluster* files to the new directory
 > mkdir OceanBeach1/clusters
@@ -45,7 +45,7 @@ output:
 
 ### createGroups.py
 ```
-createGroups.py [directory of fastq files to cluster] [clusterOnly]
+createGroups.py [directory of fastq files to cluster] [mash_pdist_file name (output from runMashDist.py)]
 ```
 
 - use this to generate clusters for a set of fastq files of the format: name-filelen-1-fastq
@@ -122,6 +122,17 @@ usage: look at the .SAM file and mark all reads which were aligned or unaligned;
 remove all aligned reads from the corresponding .fastq files.
 
 - the goal of this is to create .fastq files with 100% novel reads for further analysis and assembly
+
+
+### runMashDist.py
+```
+runMashDist.py [directory of fastq files to cluster]
+```
+- use this to run MASH sketch and MASH dist for all .fq files in the directory via commands passed to linux
+
+output:
+1. .msh sketch files for all corresponding .fq files
+3. output file mash_pdist_[k-value]-[s-value] containing the MASH pairwise distances
 
 
 ### viewAsGraph.py

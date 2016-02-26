@@ -1,6 +1,6 @@
 __author__ = 'KATRINA'
 '''
-createGroups.py [directory of fastq files to cluster] [clusterOnly]
+createGroups.py [directory of fastq files to cluster] [mash_pdist_file name (output from runMashDist.py)]
 - use this to generate clusters for a set of fastq files of the format: name-filelen-1-fastq
 - if you already have a mash dist file for the dataset (in the directory specified as arg1)
     type "clusterOnly" in arg2
@@ -25,33 +25,11 @@ import os
 import glob
 import subprocess
 
-#run linux command to create mash sketches for all files
-def runMashSketch(file_string,k,s):
-    print("inside runMashSketch")
-    print(file_string)
-    cmd = mash+' sketch -o reference -u -k '+str(k)+' -s '+str(s)+' '+file_string
-    print(cmd)
-    os.system(cmd)
-    print('finished runMashSketch')
-    return
-
-#run linux command to create mash distance file
-def runMashDist(file_string,k,s):
-    print("inside runMashDist")
-    cmd = mash+' dist reference.msh -s ' +str(s)+' '+file_string+'> '+'mash_pdist_'+str(k)+'_'+str(s)
-    print(cmd)
-    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-    process.wait()
-    print(process.returncode)
-    print('finished runMashDist')
-    return
-
 def getClusters(mash_distanceFile, threshold):
     print("inside getClusters()")
     output_metrics = open("metrics.o",'w')
     unclustered = open("unclustered.o",'w')
     distFile = open(mash_distanceFile,'r')
-
     result_dictionary = {}; temp_dictionary = {}; all_file_names = {}
 
     line_count = 0
@@ -110,20 +88,13 @@ def getClusters(mash_distanceFile, threshold):
         for i in result_dictionary[x]:
             s = i.split('-')
             #split the name of the file, this depends on how the names are declared so may need to be updated.
-            name = s[0]+'-'+s[1] ###TODO: switch bach for regular usage
+            name = s[0]+'-'+s[1] ###TODO: switch back for regular usage
             #name = s[0]+'-'+s[1]+'-'+s[2]
-            temp_arrayR1.append(name+'-1.fastq')  ###TODO: switch bach for regular usage
-            temp_arrayR2.append(name+'-2.fastq')
+            temp_arrayR1.append(name+'-1.f*q')  ###TODO: switch back for regular usage
+            temp_arrayR2.append(name+'-2.f*q')
             #temp_arrayR1.append(name+'-1.fq')
             #temp_arrayR2.append(name+'-2.fq')
 
-        '''
-        for i in result_dictionary[x]:
-            if '1.f' in i:
-                temp_arrayR1.append(i)
-            elif '2.f' in i:
-                temp_arrayR2.append(i)
-                '''
 
         filenames_R1[x] = ' '.join(sorted(temp_arrayR1))
         filenames_R2[x] = ' '.join(sorted(temp_arrayR2))
@@ -161,12 +132,10 @@ def concatonate_PE_reads(array_of_filenames):
     return new_file_array
 
 
-
-def main(input_directory,k,s,threshold,cu):
+def main(input_directory,k,s,threshold):
 
     #get list of all fastq files in directory
-    #array_of_filenames = glob.glob('./*.fq') ###TODO: switch back for regular usage
-    array_of_filenames = glob.glob('./*.fastq')
+    array_of_filenames = glob.glob('./*.f*q')
     #print(array_of_filenames)
 
     new_file_array = concatonate_PE_reads(array_of_filenames)
@@ -178,10 +147,7 @@ def main(input_directory,k,s,threshold,cu):
         file_string = file_string + f+' '
     file_string = ' '.join(new_file_array) + ' '
 
-    if cu != 'clusterOnly':
-        runMashSketch(file_string,k,s)
-        runMashDist(file_string,k,s)
-    concatFilesR1, concatFilesR2 = getClusters('mash_pdist_'+str(k)+'_'+str(s), threshold)
+    concatFilesR1, concatFilesR2 = getClusters(mash_distanceFile, threshold)
 
     for c in concatFilesR1.keys():
         file_namesR1 = concatFilesR1[c]
@@ -191,19 +157,21 @@ def main(input_directory,k,s,threshold,cu):
         cmd2 = 'cat '+file_namesR2 + ' > cluster'+str(c)+'_R2.fastq'
         os.system(cmd2)
 
+
 #declare global variables
 start = timeit.default_timer()
 mash = '~/tools/MASH/mash'
 input_directory = sys.argv[1]
-k=12 		#k-mer length for MASH
-s=5000		#sketch size for MASH
-cu = sys.argv[2]
+mash_distanceFile = sys.argv[2]
+iteration = 1
+k=12
+s=5000
 threshold = .99
 array_of_filenames=None
 os.chdir(input_directory)
 
 #run main program
-main(input_directory,k,s,threshold,cu)
+main(input_directory,k,s,threshold)
 
 #output total time to console
 stop = timeit.default_timer()
